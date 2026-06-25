@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para ti</title>
+<style>
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    background: #FFF8F2;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #card-app {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 800px;
+    background: #FFF8F2;
+    overflow: hidden;
+  }
+  @media (min-width: 480px) {
+    #card-app {
+      height: 700px;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(0.8); opacity: 0; }
+    10% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { transform: translateY(-480px) scale(1.1); opacity: 0; }
+  }
+  @keyframes pulseHeart { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+  @keyframes growStem { from { height: 0%; } to { height: 100%; } }
+  @keyframes popIn {
+    0% { transform: scale(0) rotate(-8deg); opacity: 0; }
+    70% { transform: scale(1.15) rotate(4deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  @keyframes sway { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(2.5deg); } }
+  @keyframes msgCycle {
+    0% { opacity: 0; transform: translateY(6px); }
+    6% { opacity: 1; transform: translateY(0); }
+    28% { opacity: 1; transform: translateY(0); }
+    34% { opacity: 0; transform: translateY(-6px); }
+    100% { opacity: 0; }
+  }
+  .heart-particle { position: absolute; left: 0; animation: floatUp linear infinite; }
+  .heart-particle svg { display: block; animation: pulseHeart 1.3s ease-in-out infinite; }
+  .msg-text {
+    position: absolute; top: 0; left: 0; width: 100%; text-align: center;
+    font-size: 15px; font-weight: 500; color: #9C4A40;
+    animation: msgCycle 12s ease-in-out infinite;
+    opacity: 0;
+    padding: 0 12px;
+    box-sizing: border-box;
+  }
+  .stem-wrap { position: absolute; bottom: 0; display: flex; flex-direction: column; align-items: center; transform-origin: bottom center; animation: sway 5s ease-in-out infinite; }
+  .stem { width: 2px; background: #6FA84F; animation: growStem 1.4s ease-out forwards; transform-origin: bottom center; }
+  .flower-head { position: absolute; transform-origin: center bottom; opacity: 0; animation: popIn 0.7s ease-out forwards; }
+  .leaf { position: absolute; width: 11px; height: 6px; background: #7FB85C; border-radius: 0 60% 60% 60%; opacity: 0; animation: popIn 0.6s ease-out forwards; }
+</style>
+</head>
+<body>
+
+<div id="card-app">
+  <div id="hearts-layer" style="position:absolute; inset:0; z-index:10; overflow:hidden;"></div>
+
+  <div id="content-block" style="position:absolute; top:50%; left:0; width:100%; transform:translateY(-50%); z-index:5;">
+    <div style="text-align:center; margin-bottom:6px;">
+      <span style="font-size:13px; color:#C98A7D; letter-spacing:0.3px;">para ti</span>
+    </div>
+
+    <div style="position:relative; width:100%; height:34px; margin-bottom:18px;">
+      <div class="msg-text" style="animation-delay:0s;">te quiero mucho</div>
+      <div class="msg-text" style="animation-delay:4s;">me haces tan feliz</div>
+      <div class="msg-text" style="animation-delay:8s;">me encantas, mi niña</div>
+    </div>
+
+    <div style="position:relative; width:100%; height:170px;">
+      <div id="daisies-layer" style="position:absolute; bottom:0; left:0; width:100%; height:170px; z-index:2;"></div>
+    </div>
+    <div id="ground" style="width:100%; height:40px; background:#9FC279;"></div>
+  </div>
+</div>
+
+<script>
+function rnd(a, b) {
+  return a + Math.random() * (b - a);
+}
+
+function makeHeart(i, total, layer, bottomPx) {
+  var leftPct = rnd(4, 92);
+  var size = rnd(20, 32);
+  var dur = rnd(10, 16);
+  var delay = (i / total) * 13;
+  var colors = ["#D4537E", "#ED93B1", "#E24B4A", "#F0997B"];
+  var color = colors[i % colors.length];
+
+  var holder = document.createElement("div");
+  holder.className = "heart-particle";
+  holder.style.left = leftPct + "%";
+  holder.style.bottom = bottomPx + "px";
+  holder.style.animationDuration = dur + "s";
+  holder.style.animationDelay = delay + "s";
+
+  var ns = "http://www.w3.org/2000/svg";
+  var svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("width", size);
+  svg.setAttribute("height", size);
+  svg.setAttribute("viewBox", "0 0 60 50");
+  var path = document.createElementNS(ns, "path");
+  path.setAttribute("d", "M30 50 C10 35 0 22 0 12 C0 4 6 0 13 0 C19 0 25 3 30 11 C35 3 41 0 47 0 C54 0 60 4 60 12 C60 22 50 35 30 50 Z");
+  path.setAttribute("fill", color);
+  svg.appendChild(path);
+  holder.appendChild(svg);
+  layer.appendChild(holder);
+}
+
+function makeDaisy(leftPct, stemHeight, flowerSize, growDelay, flip, layer, zIndex) {
+  var wrap = document.createElement("div");
+  wrap.className = "stem-wrap";
+  wrap.style.left = leftPct + "%";
+  wrap.style.bottom = "0px";
+  wrap.style.height = stemHeight + "px";
+  wrap.style.transform = "translateX(-50%)";
+  wrap.style.animationDelay = (growDelay + 1.4) + "s";
+  wrap.style.zIndex = zIndex;
+
+  var stem = document.createElement("div");
+  stem.className = "stem";
+  stem.style.height = "0%";
+  stem.style.animationDelay = growDelay + "s";
+  stem.style.animationFillMode = "forwards";
+
+  var leaf = document.createElement("div");
+  leaf.className = "leaf";
+  leaf.style.bottom = (stemHeight * 0.35) + "px";
+  if (flip) {
+    leaf.style.left = "2px";
+    leaf.style.transform = "rotate(-15deg) scaleX(-1)";
+  } else {
+    leaf.style.left = "-9px";
+    leaf.style.transform = "rotate(15deg)";
+  }
+  leaf.style.animationDelay = (growDelay + 0.6) + "s";
+  leaf.style.animationFillMode = "forwards";
+
+  var flower = document.createElement("div");
+  flower.className = "flower-head";
+  flower.style.bottom = (stemHeight - 4) + "px";
+  flower.style.width = flowerSize + "px";
+  flower.style.height = flowerSize + "px";
+  flower.style.left = -(flowerSize / 2 - 1) + "px";
+  flower.style.animationDelay = (growDelay + 1.3) + "s";
+  flower.style.animationFillMode = "forwards";
+
+  var ns = "http://www.w3.org/2000/svg";
+  var svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("width", flowerSize);
+  svg.setAttribute("height", flowerSize);
+  svg.setAttribute("viewBox", "0 0 60 60");
+
+  var angles = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330];
+  for (var a = 0; a < angles.length; a++) {
+    var ellipse = document.createElementNS(ns, "ellipse");
+    ellipse.setAttribute("cx", "30");
+    ellipse.setAttribute("cy", "13");
+    ellipse.setAttribute("rx", "6.5");
+    ellipse.setAttribute("ry", "13");
+    ellipse.setAttribute("fill", "#FFFFFF");
+    ellipse.setAttribute("stroke", "#E8DCCB");
+    ellipse.setAttribute("stroke-width", "0.6");
+    ellipse.setAttribute("transform", "rotate(" + angles[a] + " 30 30)");
+    svg.appendChild(ellipse);
+  }
+
+  var center = document.createElementNS(ns, "circle");
+  center.setAttribute("cx", "30");
+  center.setAttribute("cy", "30");
+  center.setAttribute("r", "8.5");
+  center.setAttribute("fill", "#F0997B");
+  svg.appendChild(center);
+
+  var centerRing = document.createElementNS(ns, "circle");
+  centerRing.setAttribute("cx", "30");
+  centerRing.setAttribute("cy", "30");
+  centerRing.setAttribute("r", "8.5");
+  centerRing.setAttribute("fill", "none");
+  centerRing.setAttribute("stroke", "#D8784F");
+  centerRing.setAttribute("stroke-width", "0.6");
+  svg.appendChild(centerRing);
+
+  flower.appendChild(svg);
+
+  wrap.appendChild(stem);
+  wrap.appendChild(leaf);
+  wrap.appendChild(flower);
+  layer.appendChild(wrap);
+}
+
+(function init() {
+  var cardApp = document.getElementById("card-app");
+  var ground = document.getElementById("ground");
+  var heartsLayer = document.getElementById("hearts-layer");
+
+  var daisiesLayer = document.getElementById("daisies-layer");
+  var backCount = 9;
+  var frontCount = 11;
+  var idx = 0;
+
+  var backColWidth = 100 / backCount;
+  for (var b = 0; b < backCount; b++) {
+    var slotCenter = backColWidth * b + backColWidth / 2;
+    var jitter = backColWidth * 0.28;
+    var leftPct = slotCenter + rnd(-jitter, jitter);
+    var stemHeight = rnd(95, 130);
+    var flowerSize = rnd(26, 32);
+    var growDelay = rnd(0, 1.6);
+    makeDaisy(leftPct, stemHeight, flowerSize, growDelay, idx % 2 === 1, daisiesLayer, 1);
+    idx++;
+  }
+
+  var frontColWidth = 100 / frontCount;
+  for (var f = 0; f < frontCount; f++) {
+    var slotCenter2 = frontColWidth * f + frontColWidth / 2;
+    var jitter2 = frontColWidth * 0.28;
+    var leftPct2 = slotCenter2 + rnd(-jitter2, jitter2);
+    var stemHeight2 = rnd(40, 65);
+    var flowerSize2 = rnd(22, 28);
+    var growDelay2 = rnd(0, 1.6);
+    makeDaisy(leftPct2, stemHeight2, flowerSize2, growDelay2, idx % 2 === 1, daisiesLayer, 2);
+    idx++;
+  }
+
+  function spawnHearts() {
+    heartsLayer.innerHTML = "";
+    var cardRect = cardApp.getBoundingClientRect();
+    var groundRect = ground.getBoundingClientRect();
+    var bottomPx = cardRect.bottom - groundRect.top;
+    var heartCount = 20;
+    for (var i = 0; i < heartCount; i++) {
+      makeHeart(i, heartCount, heartsLayer, bottomPx);
+    }
+  }
+
+  spawnHearts();
+
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(spawnHearts, 200);
+  });
+})();
+</script>
+
+</body>
+</html>
